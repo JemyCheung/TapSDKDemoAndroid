@@ -102,6 +102,8 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     public void onClick(View v) {
         int viewId = v.getId();
         if (viewId == R.id.btnGame) {
+            login();
+        } else if (viewId == R.id.btnStart) {
             checkLogin();
         }
     }

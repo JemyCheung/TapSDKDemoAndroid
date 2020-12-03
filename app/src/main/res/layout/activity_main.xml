@@ -12,16 +12,16 @@
     <Button android:id="@+id/btnGame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始游戏"
+        android:text="登录"
         android:textAllCaps="false"
         android:onClick="onClick" />
 
-<!--    <Button android:id="@+id/btnMoment_img"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="发布图片"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:onClick="onClick" />-->
+    <Button android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始游戏"
+        android:textAllCaps="false"
+        android:onClick="onClick" />
 
 <!--    <Button android:id="@+id/btnMoment_video"-->
 <!--        android:layout_width="match_parent"-->
