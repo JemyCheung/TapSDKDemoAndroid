@@ -19,7 +19,6 @@ import com.tds.TdsConfig;
 import com.tds.TdsInitializer;
 
 public class MainActivity extends Activity implements Button.OnClickListener {
-    private CallBackManager callbackManager;
     private String Tag = "TapTapTest";
 
     @Override
@@ -30,8 +29,6 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         initSDK();
         //注册登录回调
         registerLoginCallback();
-        //检查是否登录过
-        checkLogin();
     }
 
     private void checkLogin() {
