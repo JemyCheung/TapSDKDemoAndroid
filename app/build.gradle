@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    signingConfigs {
+        config {
+            keyAlias 'wxlogin'
+            keyPassword '111111'
+            storeFile file('../sign_password_111111.keystore')
+            storePassword '111111'
+        }
+    }
+    defaultConfig {
+        applicationId "com.tds.demo"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+}
+
+repositories{
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    //noinspection GradleCompatible
+    //implementation 'com.android.support:appcompat-v7:26.0.2'
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:23.2.1'
+
+    implementation (name:'TapSDK_1.0.0', ext:'aar')
+    //implementation (name:'oaid_sdk_1.0.23', ext:'aar')
+}
