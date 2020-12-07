@@ -96,6 +96,8 @@ public class MainActivity extends Activity implements Button.OnClickListener {
                     @Override
                     public void onSuccess(Profile profile) {
                         openID = profile.getOpenid();
+                        Log.e(Tag, openID);
+                        TapDB.setUser("zwtest", openID, LoginType.TapTap);
                     }
 
                     @Override
@@ -121,7 +123,6 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
     private void login() {
         TapLoginHelper.getInstance().startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
-        TapDB.setUser("zwtest", openID, LoginType.TapTap);
     }
 
     @Override
@@ -137,6 +138,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         } else if (viewId == R.id.btnStart) {
             if (checkLogin()) {
                 startGame();
+                Log.e(Tag,openID);
             } else {
                 login();
             }
@@ -165,6 +167,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         TapTapMomentSdk.setCallback(new TapTapMomentSdk.TapMomentCallback() {
             @Override
             public void onCallback(int code, String msg) {
+                //ignore code 500 and 600
                 Log.e(Tag, "TapTapMomentSdk-callback: code: " + code + ", msg: " + msg);
             }
         });
