@@ -1,6 +1,6 @@
-# BigPlane-大飞机游戏
+# BigPlane-大飞机
 
-代码演示了如何快速接入TapSDK
+代码主要演示如何快速接入TapSDK
 
 ## 1. 登录TapTap开发者中心
 请登录 [TapTap开发者中心](#) 来创建应用或注册为开发者。

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.taptap.sdk.AccessToken;
 import com.taptap.sdk.CallBackManager;
@@ -17,9 +18,16 @@ import com.taptap.sdk.helper.TapLoginHelper;
 import com.taptap.sdk.net.Api;
 import com.tds.TdsConfig;
 import com.tds.TdsInitializer;
+import com.tds.moment.TapTapMomentSdk;
+import com.tds.tapdb.sdk.LoginType;
+import com.tds.tapdb.sdk.TapDB;
+
+import org.json.JSONException;
 
 public class MainActivity extends Activity implements Button.OnClickListener {
     private String Tag = "TapTapTest";
+    private String openID = null;
+    private TapTapMomentSdk.Config momentConfig = new TapTapMomentSdk.Config();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +37,21 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         initSDK();
         //注册登录回调
         registerLoginCallback();
+
+        TdsInitializer.enableTapDB("1.0", "taptap");
+        TdsInitializer.enableMoment(MainActivity.this);
+        registerMomentCallback();
     }
 
-    private void checkLogin() {
+
+    private boolean checkLogin() {
         //未登录用户会返回null
         if (TapLoginHelper.getInstance().getCurrentAccessToken() == null) {
             Log.e(Tag, "checkLogin-onError");
-            login();
+            return false;
         } else {
             Log.e(Tag, "checkLogin-onSuccess");
-            startGame();
+            return true;
         }
 
         //已登录用户会实时回调onSuccess，未登录用户会回调onError
@@ -47,13 +60,12 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 //            public void onSuccess(Profile profile) {
 //                Log.e(Tag, "checkLogin-onSuccess");
 //                //TapDB会用到
-//                String openId = Profile.getCurrentProfile().getOpenid();
-//                startGame();
+//                openID = Profile.getCurrentProfile().getOpenid();
 //            }
 //
 //            @Override
 //            public void onError(Throwable throwable) {
-//                login();
+//                Log.e(Tag, "checkLogin-onError: "+throwable.getMessage());
 //            }
 //        });
     }
@@ -79,7 +91,20 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
                 Log.e(Tag, "onLoginSuccess");
-                startGame();
+                TapLoginHelper.getInstance().fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
+
+                    @Override
+                    public void onSuccess(Profile profile) {
+                        openID = profile.getOpenid();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                });
+
             }
 
             @Override
@@ -96,15 +121,38 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
     private void login() {
         TapLoginHelper.getInstance().startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
+        TapDB.setUser("zwtest", openID, LoginType.TapTap);
     }
 
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
         if (viewId == R.id.btnGame) {
-            login();
+            if (checkLogin()) {
+                Toast.makeText(this, "请勿重复登录", Toast.LENGTH_LONG).show();
+            } else {
+                login();
+            }
+
         } else if (viewId == R.id.btnStart) {
-            checkLogin();
+            if (checkLogin()) {
+                startGame();
+            } else {
+                login();
+            }
+        } else if (viewId == R.id.btnMoment_open) {
+            TapTapMomentSdk.openTapMoment(momentConfig);
+        } else if (viewId == R.id.btnMoment_video) {
+            if (checkLogin()) {
+                momentConfig.orientation = TapTapMomentSdk.ORIENTATION_DEFAULT;
+                String content = "普通动态描述";
+                String[] imagePaths = new String[]{"/sdcard/DCIM/Camera/IMG_20201201_110006.jpg"};
+                TapTapMomentSdk.publishMoment(momentConfig, imagePaths, content);
+            } else {
+                Toast.makeText(this, "请先登录", Toast.LENGTH_LONG).show();
+            }
+        } else if (viewId == R.id.btnMoment_exit) {
+            TapLoginHelper.logout();
         }
     }
 
@@ -113,4 +161,12 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         startActivity(intent);
     }
 
+    private void registerMomentCallback() {
+        TapTapMomentSdk.setCallback(new TapTapMomentSdk.TapMomentCallback() {
+            @Override
+            public void onCallback(int code, String msg) {
+                Log.e(Tag, "TapTapMomentSdk-callback: code: " + code + ", msg: " + msg);
+            }
+        });
+    }
 }

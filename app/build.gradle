@@ -47,5 +47,5 @@ dependencies {
     implementation 'com.android.support:design:23.2.1'
 
     implementation (name:'TapSDK_1.0.0', ext:'aar')
-    //implementation (name:'oaid_sdk_1.0.23', ext:'aar')
+    implementation (name:'oaid_sdk_1.0.23', ext:'aar')
 }
