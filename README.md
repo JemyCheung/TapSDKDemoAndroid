@@ -12,15 +12,7 @@
 - 最低支持Android level 15+。
 
 ## 4. 工程导入
-### 方法一、自动加载
-打开并修改 '/project/app/build.gradle' 文件
-
-```java
-dependencies {
-   implementation 'com.tds.tapsdk:TapSDK:1.0.0'
-}
-```  
-### 方法二、手动添加
+手动添加
 1. 将[下载](#)的SDK包，导入到 '/project/app/libs/' 目录下  
 2. 打开您工程的 '/project/app/build.gradle' 文件，添加gradle配置如下 
  
@@ -32,13 +24,14 @@ repositories{
 }  
 dependencies {  
 ...  
-    implementation (name:'TapSDK_1.0.0', ext:'aar')  
+    implementation (name:'TapSDK_0.0.5', ext:'aar')  
+    implementation (name:'TDSCommon_1.1.1', ext:'aar') 
 }  
 ```  
 
 ## 5. 初始化
 TapSDK初始化  
-**API**    `TdsInitializer.init()`  
+**API**    
 
 **示例代码**  
 
@@ -57,20 +50,21 @@ TdsInitializer.init(tdsConfig);
 **示例代码**
 
 ```java
-TapLoginHelper.getInstance().setLoginResultCallback(new TapLoginHelper.ITapLoginResultCallback() {
+TapLoginHelper.getInstance().addLoginResultCallback(new TapLoginHelper.TapLoginResultCallback() {
     @Override
     public void onLoginSuccess(AccessToken accessToken) {
-        startGame();
+        Log.e(Tag, "onLoginSuccess");
+    
     }
-
+    
     @Override
     public void onLoginCancel() {
-
+    
     }
-
+    
     @Override
     public void onLoginError(Throwable throwable) {
-        login();
+        Log.e(Tag, "onLoginError: " + throwable.getMessage());
     }
 });
 ```

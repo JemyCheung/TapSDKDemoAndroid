@@ -34,7 +34,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         //登录：2。注册登录回调
         registerLoginCallback();
 
-        //DB：1。开启DB
+        //DB：1。开启TapDB
         TdsInitializer.enableTapDB(MainActivity.this, "1.0", "taptap");
         //动态：1。开启动态
         TdsInitializer.enableMoment(MainActivity.this);
@@ -94,6 +94,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
                 Log.e(Tag, "onLoginSuccess");
+                //DB：设置用户信息
                 TapLoginHelper.getInstance().fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
 
                     @Override
