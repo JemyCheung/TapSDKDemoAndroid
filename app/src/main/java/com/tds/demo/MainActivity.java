@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.taptap.sdk.AccessToken;
-import com.taptap.sdk.CallBackManager;
-import com.taptap.sdk.LoginManager;
 import com.taptap.sdk.Profile;
 import com.taptap.sdk.RegionType;
 import com.taptap.sdk.TapTapSdk;
@@ -22,8 +20,6 @@ import com.tds.moment.TapTapMomentSdk;
 import com.tds.tapdb.sdk.LoginType;
 import com.tds.tapdb.sdk.TapDB;
 
-import org.json.JSONException;
-
 public class MainActivity extends Activity implements Button.OnClickListener {
     private String Tag = "TapTapTest";
     private String openID = null;
@@ -33,19 +29,26 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //初始化SDK
+        //登录：1。初始化SDK
         initSDK();
-        //注册登录回调
+        //登录：2。注册登录回调
         registerLoginCallback();
 
-        TdsInitializer.enableTapDB("1.0", "taptap");
+        //DB：1。开启DB
+        TdsInitializer.enableTapDB(MainActivity.this,"1.0", "taptap");
+        //动态：1。开启动态
         TdsInitializer.enableMoment(MainActivity.this);
+        //动态：2。注册动态回调
         registerMomentCallback();
     }
 
-
+    private void login() {
+        //登录：3。登录
+        TapLoginHelper.getInstance().startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
+    }
     private boolean checkLogin() {
-        //未登录用户会返回null
+        //登录：获取登录信息
+        // 未登录用户会返回null
         if (TapLoginHelper.getInstance().getCurrentAccessToken() == null) {
             Log.e(Tag, "checkLogin-onError");
             return false;
@@ -87,7 +90,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     }
 
     private void registerLoginCallback() {
-        TapLoginHelper.getInstance().setLoginResultCallback(new TapLoginHelper.ITapLoginResultCallback() {
+        TapLoginHelper.getInstance().addLoginResultCallback(new TapLoginHelper.TapLoginResultCallback() {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
                 Log.e(Tag, "onLoginSuccess");
@@ -102,7 +105,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
                     @Override
                     public void onError(Throwable throwable) {
-
+                        Log.e(Tag, "Login: onError");
                     }
 
                 });
@@ -121,9 +124,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         });
     }
 
-    private void login() {
-        TapLoginHelper.getInstance().startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
-    }
+
 
     @Override
     public void onClick(View v) {
@@ -143,6 +144,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
                 login();
             }
         } else if (viewId == R.id.btnMoment_open) {
+            //动态：4。打开动态页面
             TapTapMomentSdk.openTapMoment(momentConfig);
         } else if (viewId == R.id.btnMoment_video) {
             if (checkLogin()) {
@@ -169,6 +171,12 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             public void onCallback(int code, String msg) {
                 //ignore code 500 and 600
                 Log.e(Tag, "TapTapMomentSdk-callback: code: " + code + ", msg: " + msg);
+                if (code == TapTapMomentSdk.CALLBACK_CODE_GET_NOTICE_SUCCESS) {
+                    Toast.makeText(MainActivity.this, "获取通知数量:" + msg, Toast.LENGTH_SHORT).show();
+                } else if (code == TapTapMomentSdk.CALLBACK_CODE_LOGIN_SUCCESS) {
+                    //动态：3。设置动态登录状态
+                    TapTapMomentSdk.setHandleLoginResult(true);
+                }
             }
         });
     }
