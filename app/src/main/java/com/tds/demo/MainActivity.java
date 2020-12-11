@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         registerLoginCallback();
 
         //DB：1。开启DB
-        TdsInitializer.enableTapDB(MainActivity.this,"1.0", "taptap");
+        TdsInitializer.enableTapDB(MainActivity.this, "1.0", "taptap");
         //动态：1。开启动态
         TdsInitializer.enableMoment(MainActivity.this);
         //动态：2。注册动态回调
