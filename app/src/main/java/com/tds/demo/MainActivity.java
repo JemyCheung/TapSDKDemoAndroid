@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         //注册登录回调
         registerLoginCallback();
 
-        TdsInitializer.enableTapDB("1.0", "taptap");
+        TdsInitializer.enableTapDB(MainActivity.this, "1.0", "taptap");
         TdsInitializer.enableMoment(MainActivity.this);
         registerMomentCallback();
     }
@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     }
 
     private void registerLoginCallback() {
-        TapLoginHelper.getInstance().setLoginResultCallback(new TapLoginHelper.ITapLoginResultCallback() {
+        TapLoginHelper.getInstance().addLoginResultCallback(new TapLoginHelper.TapLoginResultCallback() {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
                 Log.e(Tag, "onLoginSuccess");

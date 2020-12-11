@@ -39,13 +39,13 @@ public class GameActivity extends Activity {
         /**未开启DB功能会有日志提示'TapDB SDK not initialized yet, please call init method first'，不影响游戏本身功能
          * TapDB.onResume和onPause主要用来记录用户在线时长等数据
          */
-        TapDB.onResume(GameActivity.this);
+//        TapDB.onResume(GameActivity.this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        TapDB.onStop(GameActivity.this);
+//        TapDB.onStop(GameActivity.this);
         if(gameView != null){
             gameView.pause();
         }
