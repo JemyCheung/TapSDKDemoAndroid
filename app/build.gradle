@@ -46,7 +46,7 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:design:23.2.1'
 
-    implementation (name:'TapSDK_0.0.5', ext:'aar')
-    implementation (name:'TDSCommon_1.1.1', ext:'aar')
+    implementation (name:'TapSDK_0.0.51', ext:'aar')
+    implementation (name:'TDSCommon_1.1.11', ext:'aar')
     implementation (name:'oaid_sdk_1.0.23', ext:'aar')
 }

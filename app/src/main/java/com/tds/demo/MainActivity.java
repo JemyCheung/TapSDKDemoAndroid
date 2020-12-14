@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
         TapTapSdk.LoginSdkConfig loginSdkConfig = new TapTapSdk.LoginSdkConfig();
         loginSdkConfig.roundCorner = false;//false：登录页面是直角，true：登录页面是圆角
         loginSdkConfig.regionType = RegionType.CN;//标识为国际版，从2.5版本才开始支持
-        TapTapSdk.changeTapLoginConfig(loginSdkConfig);
+        TapLoginHelper.changeTapLoginConfig(loginSdkConfig);
     }
 
     private void registerLoginCallback() {
