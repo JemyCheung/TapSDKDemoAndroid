@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.taptap.sdk.AccessToken;
+import com.taptap.sdk.AccountGlobalError;
 import com.taptap.sdk.Profile;
 import com.taptap.sdk.RegionType;
 import com.taptap.sdk.TapTapSdk;
@@ -16,7 +17,6 @@ import com.taptap.sdk.helper.TapLoginHelper;
 import com.taptap.sdk.net.Api;
 import com.tds.TdsConfig;
 import com.tds.TdsInitializer;
-import com.tds.common.net.error.AccountGlobalError;
 import com.tds.moment.TapTapMomentSdk;
 import com.tds.tapdb.sdk.LoginType;
 import com.tds.tapdb.sdk.TapDB;
@@ -77,10 +77,9 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     }
 
     private void registerLoginCallback() {
-        TdsInitializer.registerLoginCallback(new TapLoginHelper.TapLoginResultCallback() {
+        TapLoginHelper.registerLoginCallback(new TapLoginHelper.TapLoginResultCallback() {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
-                //DB：设置用户信息
                 TapLoginHelper.fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
 
                     @Override
@@ -94,7 +93,6 @@ public class MainActivity extends Activity implements Button.OnClickListener {
                     public void onError(Throwable throwable) {
                         Log.e(Tag, "fetchProfileForCurrentAccessToken: onError");
                     }
-
                 });
             }
 
@@ -109,8 +107,6 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             }
         });
     }
-
-
 
     @Override
     public void onClick(View v) {
