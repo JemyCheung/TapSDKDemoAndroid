@@ -16,6 +16,7 @@ import com.taptap.sdk.helper.TapLoginHelper;
 import com.taptap.sdk.net.Api;
 import com.tds.TdsConfig;
 import com.tds.TdsInitializer;
+import com.tds.common.net.error.AccountGlobalError;
 import com.tds.moment.TapTapMomentSdk;
 import com.tds.tapdb.sdk.LoginType;
 import com.tds.tapdb.sdk.TapDB;
@@ -44,12 +45,12 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
     private void login() {
         //登录：3。登录
-        TapLoginHelper.getInstance().startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
+        TapLoginHelper.startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
     }
     private boolean checkLogin() {
         //登录：获取登录信息
         // 未登录用户会返回null
-        if (TapLoginHelper.getInstance().getCurrentAccessToken() == null) {
+        if (TapLoginHelper.getCurrentAccessToken() == null) {
             Log.e(Tag, "checkLogin-onError");
             return false;
         } else {
@@ -57,20 +58,6 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             return true;
         }
 
-        //已登录用户会实时回调onSuccess，未登录用户会回调onError
-//        TapLoginHelper.getInstance().fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
-//            @Override
-//            public void onSuccess(Profile profile) {
-//                Log.e(Tag, "checkLogin-onSuccess");
-//                //TapDB会用到
-//                openID = Profile.getCurrentProfile().getOpenid();
-//            }
-//
-//            @Override
-//            public void onError(Throwable throwable) {
-//                Log.e(Tag, "checkLogin-onError: "+throwable.getMessage());
-//            }
-//        });
     }
 
     private void initSDK() {
@@ -90,12 +77,11 @@ public class MainActivity extends Activity implements Button.OnClickListener {
     }
 
     private void registerLoginCallback() {
-        TapLoginHelper.getInstance().addLoginResultCallback(new TapLoginHelper.TapLoginResultCallback() {
+        TdsInitializer.registerLoginCallback(new TapLoginHelper.TapLoginResultCallback() {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
-                Log.e(Tag, "onLoginSuccess");
                 //DB：设置用户信息
-                TapLoginHelper.getInstance().fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
+                TapLoginHelper.fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
 
                     @Override
                     public void onSuccess(Profile profile) {
@@ -106,21 +92,20 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e(Tag, "Login: onError");
+                        Log.e(Tag, "fetchProfileForCurrentAccessToken: onError");
                     }
 
                 });
-
             }
 
             @Override
             public void onLoginCancel() {
-
+                Log.e(Tag, "Login: onLoginCancel");
             }
 
             @Override
-            public void onLoginError(Throwable throwable) {
-                Log.e(Tag, "onLoginError: " + throwable.getMessage());
+            public void onLoginError(AccountGlobalError accountGlobalError) {
+                Log.e(Tag, "Login: onLoginError");
             }
         });
     }
