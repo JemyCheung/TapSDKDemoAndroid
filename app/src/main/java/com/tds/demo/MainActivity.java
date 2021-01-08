@@ -12,8 +12,8 @@ import com.taptap.sdk.AccessToken;
 import com.taptap.sdk.AccountGlobalError;
 import com.taptap.sdk.Profile;
 import com.taptap.sdk.RegionType;
-import com.taptap.sdk.TapTapSdk;
-import com.taptap.sdk.helper.TapLoginHelper;
+
+import com.taptap.sdk.TapLoginHelper;
 import com.taptap.sdk.net.Api;
 import com.tds.TdsConfig;
 import com.tds.TdsInitializer;
@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
     private void login() {
         //登录：3。登录
-        TapLoginHelper.startTapLogin(MainActivity.this, TapTapSdk.SCOPE_PUIBLIC_PROFILE);
+        TapLoginHelper.startTapLogin(MainActivity.this, TapLoginHelper.SCOPE_PUBLIC_PROFILE);
     }
     private boolean checkLogin() {
         //登录：获取登录信息
@@ -69,24 +69,20 @@ public class MainActivity extends Activity implements Button.OnClickListener {
 
         TdsInitializer.init(tdsConfig);
 
-        //登录配置
-        TapTapSdk.LoginSdkConfig loginSdkConfig = new TapTapSdk.LoginSdkConfig();
-        loginSdkConfig.roundCorner = false;//false：登录页面是直角，true：登录页面是圆角
-        loginSdkConfig.regionType = RegionType.CN;//标识为国际版，从2.5版本才开始支持
-        TapTapSdk.changeTapLoginConfig(loginSdkConfig);
     }
 
     private void registerLoginCallback() {
         TapLoginHelper.registerLoginCallback(new TapLoginHelper.TapLoginResultCallback() {
             @Override
             public void onLoginSuccess(AccessToken accessToken) {
+                Log.e(Tag,"accessToken: "+accessToken.access_token);
                 TapLoginHelper.fetchProfileForCurrentAccessToken(new Api.ApiCallback<Profile>() {
 
                     @Override
                     public void onSuccess(Profile profile) {
                         openID = profile.getOpenid();
                         Log.e(Tag, openID);
-                        TapDB.setUser("zwtest", openID, LoginType.TapTap);
+                        //TapDB.setUser("zwtest", openID, LoginType.TapTap);
                     }
 
                     @Override
@@ -153,12 +149,7 @@ public class MainActivity extends Activity implements Button.OnClickListener {
             public void onCallback(int code, String msg) {
                 //ignore code 500 and 600
                 Log.e(Tag, "TapTapMomentSdk-callback: code: " + code + ", msg: " + msg);
-                if (code == TapTapMomentSdk.CALLBACK_CODE_GET_NOTICE_SUCCESS) {
                     Toast.makeText(MainActivity.this, "获取通知数量:" + msg, Toast.LENGTH_SHORT).show();
-                } else if (code == TapTapMomentSdk.CALLBACK_CODE_LOGIN_SUCCESS) {
-                    //动态：3。设置动态登录状态
-                    TapTapMomentSdk.setHandleLoginResult(true);
-                }
             }
         });
     }
